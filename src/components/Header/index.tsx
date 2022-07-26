@@ -1,3 +1,12 @@
+import { Logo } from '../Logo';
+import styles from './header.module.scss';
+
 export default function Header() {
-  // TODO
+  return (
+    <header>
+      <div className={styles.header}>
+        <Logo />
+      </div>
+    </header>
+  );
 }
