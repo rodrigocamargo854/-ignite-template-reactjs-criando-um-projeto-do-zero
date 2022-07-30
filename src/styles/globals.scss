@@ -21,7 +21,7 @@
 
 body {
 background: var(--color-background);
-color: var(--color-heading)
+color: var(--color-heading);
 }
 
 
@@ -37,7 +37,7 @@ a {
 }
 
 button {
-
+  cursor:pointer;
 }
 
 h1,
