@@ -7,8 +7,16 @@
    a+a {
     margin-top: 3rem;
    }
-}
 
+   button {
+    border: none;
+    background: none;
+    color:var(--color-highlight);
+    font-weight:600;
+    margin-top:4rem;
+    cursor: pointer;
+   }
+}
 
 .post{
  strong{
@@ -30,12 +38,11 @@
 
   & li{
     font-size: 0.8rem;
+    margin-right:26px ;
   }
    & svg{
     margin-right: 0.5rem;
    }
-   & + li{
-    margin-left: 1.6rem;
-   }
+
  }
 }

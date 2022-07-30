@@ -1,5 +1,4 @@
 import { GetStaticProps } from 'next';
-import Head from 'next/head';
 import Link from 'next/link';
 import Header from '../components/Header';
 import { FiCalendar, FiUser } from 'react-icons/fi';
@@ -50,15 +49,14 @@ export default function Home() {
               </ul>
             </a>
           </Link>
-
+          <button type="button">Carregar mais posts</button>
         </div>
       </main>
     </>
   );
 }
 
-// export const getStaticProps = async () => {
-// const prismic = getPrismicClient({});
-// const postsResponse = await prismic.getByType(TODO);
-// TODO
-// };
+export const getStaticProps = async () => {
+  const prismic = getPrismicClient({});
+  const postsResponse = await prismic.getByType();
+};
