@@ -7,7 +7,6 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
-import { predicate } from '@prismicio/client';
 
 interface Post {
   uid?: string;
@@ -59,9 +58,13 @@ export default function Home() {
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getByType('post', { pageSize: 2 });
 
-  console.log(postsResponse.results);
+  const postResponse = await prismic.getByType('posts', {
+    pageSize: 1,
+  });
+
+  console.log(postResponse.results);
+
   return {
     props: {
       data: 1,
