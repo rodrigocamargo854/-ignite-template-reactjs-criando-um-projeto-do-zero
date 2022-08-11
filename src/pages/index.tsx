@@ -7,6 +7,9 @@ import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
+import { useState } from 'react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 interface Post {
   uid?: string;
@@ -27,28 +30,46 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-export default function Home() {
+export default function Home({ postsPagination }: HomeProps): JSX.Element {
+  const formatedPost = postsPagination.results.map(post => {
+    return {
+      ...post,
+      //date formated
+      first_publication_date: format(
+        new Date(post.first_publication_date),
+        'dd MMM yyyy',
+        {
+          locale: ptBR,
+        }
+      ),
+    };
+  });
+
+  const [posts, setPost] = useState<Post[]>(formatedPost);
+
   return (
     <>
       <main className={commonStyles.container}>
         <Header />
         <div className={styles.posts}>
-          <Link href="/">
-            <a className={styles.post}>
-              <strong>Como Utilizar Hooks</strong>
-              <p>Pensando em sincronização em vez de ciclos de vida.</p>
-              <ul>
-                <li>
-                  <FiCalendar />
-                  15 mar 2201
-                </li>
-                <li>
-                  <FiUser />
-                  Rodrigo Camargo
-                </li>
-              </ul>
-            </a>
-          </Link>
+          {posts.map(post => (
+            <Link href={`/post/${post.uid}`} key={post.uid} >
+              <a className={styles.post}>
+                <strong>{post.data.title}</strong>
+                <p>{post.data.subtitle}</p>
+                <ul>
+                  <li>
+                    <FiCalendar />
+                    {post.first_publication_date}
+                  </li>
+                  <li>
+                    <FiUser />
+                    {post.data.author}
+                  </li>
+                </ul>
+              </a>
+            </Link>
+          ))}
           <button type="button">Carregar mais posts</button>
         </div>
       </main>
@@ -65,9 +86,26 @@ export const getStaticProps: GetStaticProps = async () => {
 
   console.log(postResponse.results);
 
+  const posts = postResponse.results.map(post => {
+    return {
+      uid: post.uid,
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: post.data.title,
+        subtitle: post.data.subtitle,
+        author: post.data.author,
+      },
+    };
+  });
+
+  const postsPagination = {
+    next_page: postResponse.next_page,
+    results: posts,
+  };
+
   return {
     props: {
-      data: 1,
+      postsPagination,
     },
   };
 };
