@@ -46,6 +46,39 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   });
 
   const [posts, setPost] = useState<Post[]>(formatedPost);
+  const [nextPage, setNextPage] = useState(postsPagination.next_page);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  async function handleNextPage(): Promise<void> {
+    if (currentPage != 1 && nextPage == null) {
+      return;
+    }
+
+    const postResults = await fetch(`${nextPage}`).then(response =>
+      response.json()
+    );
+    setNextPage(postResults.next_page);
+    setCurrentPage(postResults.page);
+
+    const newPosts = postResults.results.map(post => {
+      return {
+        uid: post.uid,
+        first_publication_date: format(
+          new Date(post.first_publication_date),
+          'dd MMM yyyy',
+          {
+            locale: ptBR,
+          }
+        ),
+        data: {
+          title: post.data.title,
+          subtitle: post.data.subtitle,
+          author: post.data.author,
+        },
+      };
+    });
+    setPost([...posts,...newPosts])
+  }
 
   return (
     <>
@@ -53,7 +86,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <Header />
         <div className={styles.posts}>
           {posts.map(post => (
-            <Link href={`/post/${post.uid}`} key={post.uid} >
+            <Link href={`/post/${post.uid}`} key={post.uid}>
               <a className={styles.post}>
                 <strong>{post.data.title}</strong>
                 <p>{post.data.subtitle}</p>
@@ -70,7 +103,9 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
               </a>
             </Link>
           ))}
-          <button type="button">Carregar mais posts</button>
+          <button type="button" onClick={handleNextPage}>
+            Carregar mais posts
+          </button>
         </div>
       </main>
     </>
