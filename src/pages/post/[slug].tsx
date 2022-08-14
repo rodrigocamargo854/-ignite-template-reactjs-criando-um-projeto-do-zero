@@ -26,9 +26,12 @@ interface PostProps {
   post: Post;
 }
 
-// export default function Post() {
-//   // TODO
-// }
+export default function Post({post}:PostProps) {
+  return (
+    //todo montar front base de acordo com o figma
+    //para depois alimentar com os dados vindo do cms
+  )
+}
 
 // export const getStaticPaths = async () => {
 //   const prismic = getPrismicClient({});

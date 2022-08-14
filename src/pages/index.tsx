@@ -77,7 +77,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         },
       };
     });
-    setPost([...posts,...newPosts])
+    setPost([...posts, ...newPosts]);
   }
 
   return (
@@ -103,9 +103,11 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
               </a>
             </Link>
           ))}
-          <button type="button" onClick={handleNextPage}>
-            Carregar mais posts
-          </button>
+          {nextPage && (
+            <button type="button" onClick={handleNextPage}>
+              Carregar mais posts
+            </button>
+          )}
         </div>
       </main>
     </>
@@ -119,7 +121,6 @@ export const getStaticProps: GetStaticProps = async () => {
     pageSize: 1,
   });
 
-  console.log(postResponse.results);
 
   const posts = postResponse.results.map(post => {
     return {
