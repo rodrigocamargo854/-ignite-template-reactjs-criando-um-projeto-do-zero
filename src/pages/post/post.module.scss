@@ -1,1 +1,59 @@
-// TODO
+.main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+
+}
+
+.banner {
+  max-width: 100%;
+  height: 25rem;
+  object-fit: cover;
+}
+
+.postTop {}
+
+.post {
+  h2 {
+    font: size 2.5rem;
+    color: var(--color-heading);
+    margin: 3rem 0;
+  }
+
+  p,
+  span,
+  a,
+  ul {
+    font-size: 1.125rem;
+    line-height:1.8;
+    margin: 1.8rem 0;
+  }
+
+  a{
+    color: var(--color-highlight)
+  }
+
+  ul {
+    display: flex;
+    list-style: none;
+    margin-top: 1.5rem;
+    padding: 0;
+  }
+
+  & li {
+    font-size: 0.8rem;
+    margin-right: 26px;
+    list-style: none;
+  }
+
+  & svg {
+    margin-right: 0.5rem;
+  }
+}
+
+.header {
+  display: flex;
+}
+
+.title {}
