@@ -1,4 +1,6 @@
+import parseJSON from 'date-fns/parseJSON';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import { RichText } from 'prismic-dom';
 import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import Header from '../../components/Header';
 
@@ -29,12 +31,13 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+  console.log(post);
   return (
     <>
       <Header />
       <img src="/eatSleepCode.svg" alt="logo" className={styles.banner} />
 
-      <main className={commonStyles.container}>
+       <main className={commonStyles.container}>
         <div className={styles.post}>
           <div className={styles.postTop}>
             <h1 className={styles.title}>Criando um app CRA do zero</h1>
@@ -53,47 +56,61 @@ export default function Post({ post }: PostProps) {
               </li>
             </ul>
           </div>
-          <article>
-            <h2>Titulo Seção</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Eius,
-              placeat, atque fugiat corporis explicabo vero illum molestias
-              minima non esse eum veritatis eligendi, harum repellat velit
-              perferendis quo maxime quibusdam totam! Laboriosam unde magni non
-              eaque ex? <strong>perspiciatis</strong>Sunt officiis soluta ullam
-              magni tempore minimablanditiisblanditiisblanditiisblanditiis
-              quisquam, perspiciatis corrupti error blanditiis eligendi
-              repellendus, maxime nemo quas iste vitae doloremque quos!
-              <a href="#">link dinâmico</a>accusamus dolores sunt, possi
-              Excepturi accusamus dolores sunt, possimus ut quibusdam corporis
-              quas perspiciatis iure aperiam, minima iste, magni nihil neque!
-              Modi excepturi illum similique necessitatibus!Excepturi accusamus
-              dolores sunt, possimus ut quibusdam corporis quas perspiciatis
-              iure aperiam, minima iste, magni nihil neque! Modi excepturi illum
-              similique necessitatibus!Excepturi accusamus dolores sunt,
-              possimus ut quibusdam corporis quas perspiciatis iure aperiam,
-              minima iste, magni nihil neque! Modi excepturi illum similique
-              necessitatibus!Excepturi accusamus dolores sunt, possimus ut
-              quibusdam corporis quas perspiciatis iure aperiam, minima iste,
-              magni nihil neque! Modi excepturi illum similique necessitatibus!
-            </p>
-          </article>
+          {post.data.content.map(content => {
+            return (
+              <article key={content.heading}>
+                <h2>{content.heading}</h2>
+                <div
+                  className={styles.postContent}
+                  dangerouslySetInnerHTML={{
+                    __html: RichText.asHtml(content.body),
+                  }}
+                />
+              </article>
+            );
+          })}
         </div>
       </main>
     </>
   );
 }
 
-// export const getStaticPaths = async () => {
-//   const prismic = getPrismicClient({});
-//   const posts = await prismic.getByType(TODO);
+export const getStaticPaths: GetStaticPaths = async () => {
+  // const prismic = getPrismicClient({});
+  // const posts = await prismic.getByType();
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
 
-//   // TODO
-// };
+export const getStaticProps: GetStaticProps = async context => {
+  const prismic = getPrismicClient({});
+  const { slug } = context.params;
+  const response = await prismic.getByUID('posts', String(slug), {});
 
-// export const getStaticProps = async ({params }) => {
-//   const prismic = getPrismicClient({});
-//   const response = await prismic.getByUID(TODO);
+  const post = {
+    uid: response.uid,
+    first_publication_date: response.first_publication_date,
+    data: {
+      title: response.data.title,
+      subtitle: response.data.subtitle,
+      author: response.data.author,
+      banner: {
+        url: response.data.banner.url,
+      },
+      content: response.data.content.map(content => {
+        return{
+          heading: content.heading,
+          body:[...content.body],
+        }
+      })
+    },
+  };
 
-//   // TODO
-// };
+  return {
+    props: {
+      post,
+    },
+  };
+};
