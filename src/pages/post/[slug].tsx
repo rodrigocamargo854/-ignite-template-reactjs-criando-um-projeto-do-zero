@@ -1,5 +1,9 @@
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import parseJSON from 'date-fns/parseJSON';
 import { GetStaticPaths, GetStaticProps } from 'next';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { RichText } from 'prismic-dom';
 import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import Header from '../../components/Header';
@@ -10,6 +14,7 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
+  uid: string | null;
   first_publication_date: string | null;
   data: {
     title: string;
@@ -31,25 +36,41 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
-  console.log(post);
+  const router = useRouter();
+  //loader
+  if (router.isFallback) {
+    return <h1>Carregando...</h1>;
+  }
+
+  const formatedDate = format(
+    new Date(post.first_publication_date),
+    'dd MMM yyyy',
+    {
+      locale: ptBR,
+    }
+  );
+
   return (
     <>
+      <Head>
+        <title>{`${post.data.title} || spaceTravelling`}</title>
+      </Head>
       <Header />
-      <img src="/eatSleepCode.svg" alt="logo" className={styles.banner} />
+      <img src={post.data.banner.url} alt="logo" className={styles.banner} />
 
-       <main className={commonStyles.container}>
+      <main className={commonStyles.container}>
         <div className={styles.post}>
           <div className={styles.postTop}>
-            <h1 className={styles.title}>Criando um app CRA do zero</h1>
+            <h1 className={styles.title}>{post.data.title}</h1>
             <strong></strong>
             <ul className={styles.post}>
               <li>
                 <FiCalendar />
-                13 maio 2020
+                {formatedDate}
               </li>
               <li>
                 <FiUser />
-                Rodrigo Camargo
+                {post.data.author}
               </li>
               <li>
                 <FiClock />4 min
@@ -76,11 +97,16 @@ export default function Post({ post }: PostProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  // const prismic = getPrismicClient({});
-  // const posts = await prismic.getByType();
+  const prismic = getPrismicClient({});
+  const postsResponse = await prismic.getByType('posts');
+
   return {
-    paths: [],
     fallback: true,
+    paths: postsResponse.results.map(post => ({
+      params: {
+        slug: post.uid!,
+      },
+    })),
   };
 };
 
@@ -100,11 +126,11 @@ export const getStaticProps: GetStaticProps = async context => {
         url: response.data.banner.url,
       },
       content: response.data.content.map(content => {
-        return{
+        return {
           heading: content.heading,
-          body:[...content.body],
-        }
-      })
+          body: [...content.body],
+        };
+      }),
     },
   };
 
