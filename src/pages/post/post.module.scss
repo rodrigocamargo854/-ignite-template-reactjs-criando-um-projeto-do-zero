@@ -12,7 +12,35 @@
   object-fit: cover;
 }
 
-.postTop {}
+.post {
+  ul {
+
+    display: flex;
+    list-style: none;
+    margin-top: 1.5rem;
+    padding: 0;
+
+  }
+
+  & li {
+    font-size: 0.8rem;
+    margin-right: 26px;
+    list-style: none;
+  }
+
+  p,
+  span,
+  a,
+  ul {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin: 1.8rem 0;
+  }
+
+  & svg {
+    margin-right: 0.5rem;
+  }
+}
 
 .postContent {
   h2 {
@@ -26,25 +54,12 @@
   a,
   ul {
     font-size: 1.125rem;
-    line-height:1.8;
+    line-height: 1.8;
     margin: 1.8rem 0;
   }
 
-  a{
-    color: var(--color-highlight)
-  }
-
-  ul {
-    display: flex;
-    list-style: none;
-    margin-top: 1.5rem;
-    padding: 0;
-  }
-
-  & li {
-    font-size: 0.8rem;
-    margin-right: 26px;
-    list-style: none;
+  a {
+    color: var(--color-highlight);
   }
 
   & svg {
@@ -55,5 +70,3 @@
 .header {
   display: flex;
 }
-
-.title {}

@@ -1,6 +1,5 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import parseJSON from 'date-fns/parseJSON';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -36,6 +35,14 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps) {
+
+  const wordTimeSums = post.data.content.reduce((total, content) => {
+    return total += content.heading.length}, 0);
+
+  const totalTime= Math.round(3600 * wordTimeSums) / 300
+  const totalTimeRounded = Math.round(totalTime/100)
+
+
   const router = useRouter();
   //loader
   if (router.isFallback) {
@@ -73,7 +80,7 @@ export default function Post({ post }: PostProps) {
                 {post.data.author}
               </li>
               <li>
-                <FiClock />4 min
+                <FiClock />{`${totalTimeRounded} min`}
               </li>
             </ul>
           </div>
