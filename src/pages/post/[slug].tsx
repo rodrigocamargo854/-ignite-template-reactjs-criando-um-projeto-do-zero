@@ -39,8 +39,8 @@ export default function Post({ post }: PostProps) {
   const wordTimeSums = post.data.content.reduce((total, content) => {
     return total += content.heading.length}, 0);
 
-  const totalTime= Math.round(3600 * wordTimeSums) / 300
-  const totalTimeRounded = Math.round(totalTime/100)
+  const readTime= Math.round(3600 * wordTimeSums) / 300
+  const totalTimeRounded = Math.ceil(readTime/100)
 
 
   const router = useRouter();
